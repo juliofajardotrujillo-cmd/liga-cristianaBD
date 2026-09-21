@@ -81,4 +81,95 @@ Reglas) usa rutas reales de React Router (`/`, `/calendario`,
 `/equipos`, `/estadisticas`, `/reglas`), así que la app es completamente
 navegable, con el ítem activo resaltado igual que en el diseño
 original.
-# liga-cristiana
+
+
+
+## Panel de administrador + base de datos (Supabase)
+
+Arriba a la derecha del encabezado hay un botón con ícono de persona
+que lleva a `/admin`. Ahí se pide correo/contraseña y, una vez dentro,
+hay dos pestañas:
+
+- **Resultados y horarios**: elige la jornada, edita el día de esa
+  jornada, y por cada partido puedes cambiar la hora, cargar el
+  marcador, y desplegar los jugadores de ambos equipos para poner
+  cuántos goles y asistencias hizo cada uno (lo que no se rellene
+  queda en 0).
+- **Equipos y jugadores**: crear equipos nuevos (nombre + escudo),
+  editar el nombre/escudo de un equipo existente, eliminarlo, y dentro
+  de cada equipo añadir, renombrar o quitar jugadores.
+
+Todo esto vive en una base de datos real (Postgres, a través de
+[Supabase](https://supabase.com)), así que cualquier cambio que haga
+el administrador —un resultado, un jugador nuevo, un escudo distinto,
+un horario editado— lo ve exactamente igual cualquier persona que
+entre a la página, desde cualquier dispositivo, sin refrescar (se
+actualiza solo gracias a Supabase Realtime).
+
+### 1. Crear el proyecto en Supabase
+
+1. Entra a [supabase.com](https://supabase.com) y crea una cuenta gratis.
+2. Crea un proyecto nuevo (elige la región más cercana a tus usuarios).
+3. Ve a **Project Settings → API** y copia dos valores: la **Project URL**
+   y la **anon public key**.
+
+### 2. Crear las tablas y las reglas de seguridad
+
+1. En el panel de Supabase, ve a **SQL Editor → New query**.
+2. Copia y pega todo el contenido de `supabase/schema.sql` y dale a
+   **Run**. Esto crea las tablas `teams`, `players`, `matchdays`,
+   `matches` y `match_results`, activa seguridad a nivel de fila
+   (cualquiera puede leer, solo un admin logueado puede escribir), y
+   habilita las actualizaciones en tiempo real.
+
+### 3. Cargar los datos iniciales (los mismos que ya tenías)
+
+1. Nueva query en el **SQL Editor**.
+2. Copia y pega todo el contenido de `supabase/seed.sql` y dale a
+   **Run**. Esto carga los 6 equipos, sus jugadores y las 13 jornadas
+   con los mismos horarios que ya tenía la app, para que no se pierda
+   nada al conectar la base de datos.
+
+### 4. Crear el usuario administrador
+
+1. Ve a **Authentication → Users → Add user**.
+2. Crea el usuario con el correo y contraseña que va a usar el
+   administrador de la liga (marca "Auto Confirm User" para no tener
+   que verificar el correo).
+
+No hay registro público: el único modo de crear administradores es
+agregándolos ahí manualmente.
+
+### 5. Conectar la app a Supabase
+
+**En desarrollo local:**
+1. Copia `.env.example` a un archivo nuevo llamado `.env`.
+2. Pega ahí la Project URL y la anon key que copiaste en el paso 1.
+3. `npm run dev`.
+
+**En Vercel (producción):**
+1. Ve a tu proyecto en Vercel → **Settings → Environment Variables**.
+2. Agrega `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY` con los mismos
+   valores.
+3. Vuelve a desplegar el proyecto (Vercel no aplica variables de
+   entorno nuevas a despliegues ya existentes, hay que hacer un
+   redeploy).
+
+### Notas importantes
+
+- Si ya habías configurado la tabla `match_results` con la versión
+  anterior (sin equipos/calendario editables), bórrala antes de correr
+  el nuevo `schema.sql`: `drop table if exists public.match_results;`
+- Los escudos se siguen sirviendo desde `/public/images/`, así que si
+  agregas un equipo nuevo con una imagen nueva, sube el archivo a esa
+  carpeta y pon esa ruta (ej. `/images/nuevo-equipo.png`) en el campo
+  del escudo. Más adelante se podría agregar subida de imágenes
+  directamente desde el panel, pero por ahora se hace por URL/ruta.
+- Los goles y asistencias se guardan por el **id** del jugador, no por
+  su nombre. Esto significa que si el administrador le cambia el
+  nombre a un jugador, sus goles y asistencias ya cargados **no se
+  pierden**.
+- Si el administrador intenta borrar un equipo que todavía tiene
+  partidos programados en el calendario, la app se lo va a impedir con
+  un mensaje (para no dejar partidos "huérfanos"); primero hay que
+  quitarlo del calendario.
