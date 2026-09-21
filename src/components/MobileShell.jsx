@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import AmbientGlows from "./AmbientGlows";
 import BottomNav from "./BottomNav";
+import AdminButton from "./AdminButton";
 
 export default function MobileShell() {
   const location = useLocation();
@@ -54,6 +55,7 @@ export default function MobileShell() {
                 Liga Cristiana
               </h1>
             </div>
+            <AdminButton />
           </div>
 
           <Outlet />

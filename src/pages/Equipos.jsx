@@ -1,6 +1,14 @@
-import { teams } from "../data/teams";
+import { useLigaData } from "../lib/useLigaData";
 
 export default function Equipos() {
+  const { teams, cargando } = useLigaData();
+
+  if (cargando) {
+    return (
+      <div className="mt-10 text-center text-xs text-moss-muted">Cargando…</div>
+    );
+  }
+
   return (
     <>
       <div className="mt-2 mb-3" style={{ paddingLeft: 20, paddingRight: 20 }}>
@@ -55,14 +63,14 @@ export default function Equipos() {
                 <div className="space-y-1.5">
                   {col1.map((player, idx) => (
                     <div
-                      key={player}
+                      key={player.id}
                       className="flex items-center space-x-2 px-2.5 py-1.5 rounded-xl"
                     >
                       <span className="text-[10px] font-bold text-moss-muted w-4 text-center">
                         {idx + 1}
                       </span>
                       <span className="font-semibold text-xs text-forest-900 truncate">
-                        {player}
+                        {player.name}
                       </span>
                     </div>
                   ))}
@@ -70,14 +78,14 @@ export default function Equipos() {
                 <div className="space-y-1.5">
                   {col2.map((player, idx) => (
                     <div
-                      key={player}
+                      key={player.id}
                       className="flex items-center space-x-2 px-2.5 py-1.5 rounded-xl"
                     >
                       <span className="text-[10px] font-bold text-moss-muted w-4 text-center">
                         {mitad + idx + 1}
                       </span>
                       <span className="font-semibold text-xs text-forest-900 truncate">
-                        {player}
+                        {player.name}
                       </span>
                     </div>
                   ))}

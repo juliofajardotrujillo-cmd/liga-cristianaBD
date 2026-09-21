@@ -1,5 +1,4 @@
-import { jornadas } from "../data/schedule";
-import { getTeamByName } from "../data/teams";
+import { useLigaData } from "../lib/useLigaData";
 
 const TrophyIcon = () => (
   <svg className="w-4 h-4 text-emerald-700 fill-current" viewBox="0 0 24 24">
@@ -7,9 +6,8 @@ const TrophyIcon = () => (
   </svg>
 );
 
-function EquipoBadge({ nombre }) {
+function EquipoBadge({ nombre, getTeamByName }) {
   const equipo = getTeamByName(nombre);
-  const esClasificado = nombre.includes("Clasificado") || nombre.includes("Ganador");
 
   if (equipo) {
     return (
@@ -28,12 +26,15 @@ function EquipoBadge({ nombre }) {
   );
 }
 
-function PartidoRow({ partido }) {
+function PartidoRow({ partido, resultado, getTeamByName }) {
   const esFinal = partido.local.includes("Ganador");
+  const jugado =
+    !!resultado && resultado.golesLocal !== null && resultado.golesVisitante !== null;
+
   return (
     <div className="flex items-center justify-between p-2 rounded-xl shadow-xs">
       <div className="flex items-center space-x-2 w-[43%] min-w-0">
-        <EquipoBadge nombre={partido.local} />
+        <EquipoBadge nombre={partido.local} getTeamByName={getTeamByName} />
         <span
           className={`${
             esFinal ? "font-bold" : "font-semibold"
@@ -43,10 +44,18 @@ function PartidoRow({ partido }) {
         </span>
       </div>
       <div className="w-[14%] flex flex-col items-center flex-shrink-0">
-        <span className="text-[10px] font-bold text-moss-muted">VS</span>
-        <span className="text-[10px] font-semibold text-emerald-700">
-          {partido.hora}
-        </span>
+        {jugado ? (
+          <span className="text-sm font-bold text-forest-900 tracking-wide">
+            {resultado.golesLocal} - {resultado.golesVisitante}
+          </span>
+        ) : (
+          <>
+            <span className="text-[10px] font-bold text-moss-muted">VS</span>
+            <span className="text-[10px] font-semibold text-emerald-700">
+              {partido.hora}
+            </span>
+          </>
+        )}
       </div>
       <div className="flex items-center justify-end space-x-2 w-[43%] text-right min-w-0">
         <span
@@ -56,13 +65,21 @@ function PartidoRow({ partido }) {
         >
           {partido.visitante}
         </span>
-        <EquipoBadge nombre={partido.visitante} />
+        <EquipoBadge nombre={partido.visitante} getTeamByName={getTeamByName} />
       </div>
     </div>
   );
 }
 
 export default function Calendario() {
+  const { jornadas, resultados, getTeamByName, cargando } = useLigaData();
+
+  if (cargando) {
+    return (
+      <div className="mt-10 text-center text-xs text-moss-muted">Cargando…</div>
+    );
+  }
+
   return (
     <>
       {/* BEGIN: HeroCard */}
@@ -72,7 +89,7 @@ export default function Calendario() {
             Calendario de Partidos
           </h2>
           <p className="text-xs text-moss-muted leading-tight">
-            <span style={{ fontSize: 11 }}>13 Jornadas&nbsp;</span>
+            <span style={{ fontSize: 11 }}>{jornadas.length} Jornadas&nbsp;</span>
           </p>
         </div>
       </div>
@@ -80,7 +97,7 @@ export default function Calendario() {
 
       <div className="space-y-6 mt-2" style={{ paddingLeft: 20, paddingRight: 20 }}>
         {jornadas.map((jornada) => (
-          <div key={jornada.numero} className={jornada.numero === 13 ? "mb-6" : ""}>
+          <div key={jornada.numero} className={jornada.numero === jornadas.length ? "mb-6" : ""}>
             <div className="flex justify-between items-baseline mb-2 px-1">
               <div>
                 <h3 className="font-serif text-lg font-bold text-forest-900 tracking-tight">
@@ -105,8 +122,13 @@ export default function Calendario() {
               }}
             >
               <div className="space-y-2.5">
-                {jornada.partidos.map((partido, idx) => (
-                  <PartidoRow key={idx} partido={partido} />
+                {jornada.partidos.map((partido) => (
+                  <PartidoRow
+                    key={partido.id}
+                    partido={partido}
+                    resultado={resultados[partido.id]}
+                    getTeamByName={getTeamByName}
+                  />
                 ))}
               </div>
             </section>

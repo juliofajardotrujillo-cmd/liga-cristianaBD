@@ -1,7 +1,5 @@
 import { Link } from "react-router-dom";
-import { getTeamByName } from "../data/teams";
-import { jornadas } from "../data/schedule";
-import { standings, goleadores } from "../data/standings";
+import { useLigaData } from "../lib/useLigaData";
 
 const ChevronRight = () => (
   <svg
@@ -19,6 +17,14 @@ const ChevronRight = () => (
 );
 
 export default function Inicio() {
+  const { jornadas, standings, goleadores, getTeamByName, cargando } = useLigaData();
+
+  if (cargando || jornadas.length === 0) {
+    return (
+      <div className="mt-10 text-center text-xs text-moss-muted">Cargando…</div>
+    );
+  }
+
   const primeraJornada = jornadas[0];
 
   // Los 3 primeros de la tabla de Goleadores y Asistencias (misma que en
@@ -69,7 +75,7 @@ export default function Inicio() {
           </div>
 
           <div className="relative w-[44%] flex flex-col items-center justify-center">
-            <div className="relative z-10 w-[120px] h-[120px] flex items-center justify-center -mr-1 transition-transform duration-500 ease-out hover:scale-105">
+            <div className="relative z-10 w-[100px] h-[100px] flex items-center justify-center -mr-1 transition-transform duration-500 ease-out hover:scale-105">
               <img
                 alt="Balón Trionda 2026"
                 className="w-full h-full object-contain relative z-10 ball-3d-shadow drop-shadow-xl select-none pointer-events-none float-ball"
@@ -121,12 +127,12 @@ export default function Inicio() {
         </div>
 
         <div className="space-y-3">
-          {primeraJornada.partidos.map((partido, idx) => {
+          {primeraJornada.partidos.map((partido) => {
             const local = getTeamByName(partido.local);
             const visitante = getTeamByName(partido.visitante);
             return (
               <article
-                key={idx}
+                key={partido.id}
                 className="rounded-2xl p-4 transition duration-200 hover:shadow-md relative border border-white/70 shadow-sm"
                 style={{
                   background: "rgba(255, 255, 255, 0.58)",

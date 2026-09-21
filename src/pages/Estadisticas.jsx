@@ -1,4 +1,4 @@
-import { standings, goleadores } from "../data/standings";
+import { useLigaData } from "../lib/useLigaData";
 
 const SwapIcon = () => (
   <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
@@ -21,6 +21,14 @@ const UpDownIcon = () => (
 );
 
 export default function Estadisticas() {
+  const { standings, goleadores, cargando } = useLigaData();
+
+  if (cargando) {
+    return (
+      <div className="mt-10 text-center text-xs text-moss-muted">Cargando…</div>
+    );
+  }
+
   return (
     <>
       <section
@@ -152,7 +160,7 @@ export default function Estadisticas() {
                 </thead>
                 <tbody className="divide-y divide-forest-900/5 text-slate-700">
                   {goleadores.map((g, idx) => (
-                    <tr key={idx} className="hover:bg-emerald-50/40 transition-colors">
+                    <tr key={g.jugadorId} className="hover:bg-emerald-50/40 transition-colors">
                       <td className="py-2 pl-1 pr-2 text-center font-medium text-moss-muted">
                         {idx + 1}
                       </td>
