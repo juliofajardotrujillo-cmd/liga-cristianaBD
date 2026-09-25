@@ -173,3 +173,23 @@ agregándolos ahí manualmente.
   partidos programados en el calendario, la app se lo va a impedir con
   un mensaje (para no dejar partidos "huérfanos"); primero hay que
   quitarlo del calendario.
+
+## Actualización: "Próxima jornada" seleccionable + ícono de la página
+
+En el panel de administrador (pestaña "Resultados y horarios") ahora
+hay un selector para marcar cuál jornada se muestra como "Próxima" en
+Inicio y con la etiqueta "Próxima" en Calendario — ya no es siempre la
+Jornada 1 fija.
+
+**Si tu proyecto de Supabase ya estaba funcionando**, hay que correr
+una migración una sola vez: copia y pega el contenido de
+`supabase/migracion_proxima_jornada.sql` en el SQL Editor de Supabase
+y dale a Run. Esto agrega la columna necesaria y deja la Jornada 1
+marcada como "próxima" por defecto (para no perder el comportamiento
+actual).
+
+Si vas a crear un proyecto de Supabase nuevo desde cero, no hace falta
+ese paso extra: ya está incluido en `schema.sql` y `seed.sql`.
+
+También se agregó el ícono (favicon) de la pestaña del navegador,
+usando la imagen del balón (`/images/trionda_5_photoroom.png`).

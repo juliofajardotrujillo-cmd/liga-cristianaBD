@@ -25,7 +25,8 @@ create table if not exists public.matchdays (
   numero integer primary key,
   titulo text not null,
   fecha text not null,
-  badge text
+  badge text,
+  es_proxima boolean not null default false
 );
 
 -- ================= PARTIDOS =================

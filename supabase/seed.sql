@@ -101,20 +101,20 @@ insert into public.players (team_id, name, sort_order) values
   ('rocafuerte', 'Esteban Salazar', 13),
   ('rocafuerte', 'Aarón Reyes', 14);
 
-insert into public.matchdays (numero, titulo, fecha, badge) values
-  (1, 'Jornada 1', 'Domingo 20/09/2026', 'Próxima'),
-  (2, 'Jornada 2', 'Domingo 27/09/2026', null),
-  (3, 'Jornada 3', 'Domingo 04/10/2026', null),
-  (4, 'Jornada 4', 'Domingo 11/10/2026', null),
-  (5, 'Jornada 5', 'Domingo 18/10/2026', null),
-  (6, 'Jornada 6', 'Domingo 25/10/2026', null),
-  (7, 'Jornada 7', 'Domingo 01/11/2026', null),
-  (8, 'Jornada 8', 'Domingo 08/11/2026', null),
-  (9, 'Jornada 9', 'Domingo 15/11/2026', null),
-  (10, 'Jornada 10', 'Domingo 22/11/2026', null),
-  (11, 'Jornada 11', 'Domingo 29/11/2026 • (Ida)', 'Semifinales'),
-  (12, 'Jornada 12', 'Domingo 06/12/2026 •  (Vuelta)', 'Semifinales'),
-  (13, 'Jornada 13', 'Domingo 13/12/2026 • Gran Final', 'Gran Final 🏆')
+insert into public.matchdays (numero, titulo, fecha, badge, es_proxima) values
+  (1, 'Jornada 1', 'Domingo 20/09/2026', null, true),
+  (2, 'Jornada 2', 'Domingo 27/09/2026', null, false),
+  (3, 'Jornada 3', 'Domingo 04/10/2026', null, false),
+  (4, 'Jornada 4', 'Domingo 11/10/2026', null, false),
+  (5, 'Jornada 5', 'Domingo 18/10/2026', null, false),
+  (6, 'Jornada 6', 'Domingo 25/10/2026', null, false),
+  (7, 'Jornada 7', 'Domingo 01/11/2026', null, false),
+  (8, 'Jornada 8', 'Domingo 08/11/2026', null, false),
+  (9, 'Jornada 9', 'Domingo 15/11/2026', null, false),
+  (10, 'Jornada 10', 'Domingo 22/11/2026', null, false),
+  (11, 'Jornada 11', 'Domingo 29/11/2026 • (Ida)', 'Semifinales', false),
+  (12, 'Jornada 12', 'Domingo 06/12/2026 •  (Vuelta)', 'Semifinales', false),
+  (13, 'Jornada 13', 'Domingo 13/12/2026 • Gran Final', 'Gran Final 🏆', false)
 on conflict (numero) do nothing;
 
 insert into public.matches (jornada_numero, orden, local_team_id, local_label, visitante_team_id, visitante_label, hora) values
