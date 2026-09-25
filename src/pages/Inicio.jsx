@@ -25,7 +25,7 @@ export default function Inicio() {
     );
   }
 
-  const primeraJornada = jornadas[0];
+  const primeraJornada = jornadas.find((j) => j.esProxima) || jornadas[0];
 
   // Los 3 primeros de la tabla de Goleadores y Asistencias (misma que en
   // Estadísticas), convertidos al formato que usa el podio de esta sección.

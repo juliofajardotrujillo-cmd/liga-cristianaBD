@@ -25,6 +25,7 @@ export async function getJornadas(equipos) {
     titulo: j.titulo,
     fecha: j.fecha,
     badge: j.badge,
+    esProxima: j.es_proxima,
     partidos: (matches || [])
       .filter((m) => m.jornada_numero === j.numero)
       .map((m) => ({
@@ -50,6 +51,27 @@ export async function actualizarHoraPartido(matchId, hora) {
   if (error) {
     console.error("Error actualizando hora:", error.message);
     return { ok: false, mensaje: error.message };
+  }
+  return { ok: true };
+}
+
+// Marca la jornada indicada como "la proxima" (la que se muestra en
+// Inicio y se etiqueta en Calendario), y le quita esa marca a
+// cualquier otra jornada que la tuviera.
+export async function marcarJornadaProxima(numero) {
+  const { error: err1 } = await supabase
+    .from("matchdays")
+    .update({ es_proxima: false })
+    .neq("numero", numero);
+
+  const { error: err2 } = await supabase
+    .from("matchdays")
+    .update({ es_proxima: true })
+    .eq("numero", numero);
+
+  if (err1 || err2) {
+    console.error("Error marcando proxima jornada:", (err1 || err2).message);
+    return { ok: false, mensaje: (err1 || err2).message };
   }
   return { ok: true };
 }
