@@ -140,6 +140,27 @@ export async function borrarJugador(playerId) {
   return { ok: true };
 }
 
+const BUCKET_ESCUDOS = "team-logos";
+
+// Sube una imagen al bucket de Supabase Storage y devuelve su URL
+// publica, lista para guardarse como logo_url del equipo.
+export async function subirEscudo(archivo) {
+  const extension = archivo.name.split(".").pop() || "png";
+  const nombreArchivo = `${crypto.randomUUID()}.${extension}`;
+
+  const { error } = await supabase.storage
+    .from(BUCKET_ESCUDOS)
+    .upload(nombreArchivo, archivo, { cacheControl: "3600", upsert: false });
+
+  if (error) {
+    console.error("Error subiendo escudo:", error.message);
+    return { ok: false, mensaje: "No se pudo subir la imagen: " + error.message };
+  }
+
+  const { data } = supabase.storage.from(BUCKET_ESCUDOS).getPublicUrl(nombreArchivo);
+  return { ok: true, url: data.publicUrl };
+}
+
 export function suscribirseACambiosEquipos(callback) {
   const canal = supabase
     .channel("equipos-cambios")

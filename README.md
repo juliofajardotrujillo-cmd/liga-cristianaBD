@@ -193,3 +193,30 @@ ese paso extra: ya está incluido en `schema.sql` y `seed.sql`.
 
 También se agregó el ícono (favicon) de la pestaña del navegador,
 usando la imagen del balón (`/images/trionda_5_photoroom.png`).
+
+## Actualización: subir fotos como escudo + botón de admin reorganizado
+
+**Panel de administrador:**
+- El botón de "hombrecito" (arriba a la derecha) ya no aparece cuando
+  estás dentro de `/admin`; en su lugar aparece directamente el botón
+  "Cerrar sesión" en esa misma esquina.
+- El botón "Cerrar sesión" que estaba junto a las pestañas se quitó de
+  ahí (para no repetirlo).
+
+**Subir fotos para los escudos:**
+Ahora, tanto al crear un equipo nuevo como al editar uno existente, hay
+un botón **"Subir foto"** junto al campo de la URL del escudo. Al
+elegir una imagen desde tu computadora o celular, se sube
+automáticamente y el campo de texto se rellena solo con su dirección;
+sigue pudiendo pegar una URL a mano si lo prefieres.
+
+**Si tu proyecto de Supabase ya estaba funcionando**, hay que correr
+una migración una sola vez: copia y pega el contenido de
+`supabase/migracion_storage_escudos.sql` en el SQL Editor de Supabase
+y dale a Run. Esto crea el espacio de almacenamiento ("bucket")
+público donde se guardan las fotos, con las reglas de seguridad
+correspondientes (cualquiera puede verlas, solo el admin logueado
+puede subir/cambiar/borrar).
+
+Si vas a crear un proyecto de Supabase nuevo desde cero, no hace falta
+ese paso extra: ya está incluido en `schema.sql`.

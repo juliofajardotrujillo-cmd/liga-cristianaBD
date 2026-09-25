@@ -1,11 +1,24 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import AmbientGlows from "./AmbientGlows";
 import BottomNav from "./BottomNav";
 import AdminButton from "./AdminButton";
+import { isLoggedIn, logout, suscribirseASesion } from "../lib/adminAuth";
 
 export default function MobileShell() {
   const location = useLocation();
+  const enAdmin = location.pathname === "/admin";
+  const [autenticado, setAutenticado] = useState(false);
+
+  useEffect(() => {
+    let activo = true;
+    isLoggedIn().then((ok) => activo && setAutenticado(ok));
+    const desuscribir = suscribirseASesion((ok) => activo && setAutenticado(ok));
+    return () => {
+      activo = false;
+      desuscribir();
+    };
+  }, []);
 
   // Cada vez que se cambia de pagina (por cualquier boton de
   // navegacion), la pagina se abre siempre desde su inicio. La UNICA
@@ -55,7 +68,19 @@ export default function MobileShell() {
                 Liga Cristiana
               </h1>
             </div>
-            <AdminButton />
+            {enAdmin ? (
+              autenticado && (
+                <button
+                  type="button"
+                  onClick={logout}
+                  className="px-3 py-1.5 rounded-full text-[11px] font-semibold bg-white/70 text-red-600 border border-red-500/30 flex-shrink-0"
+                >
+                  Cerrar sesión
+                </button>
+              )
+            ) : (
+              <AdminButton />
+            )}
           </div>
 
           <Outlet />

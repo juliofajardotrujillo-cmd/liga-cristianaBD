@@ -6,6 +6,7 @@ import {
   actualizarJugador,
   borrarJugador,
 } from "../lib/teamsStore";
+import SubirEscudoBoton from "./SubirEscudoBoton";
 
 function FilaJugador({ jugador }) {
   const [nombre, setNombre] = useState(jugador.name);
@@ -105,7 +106,7 @@ export default function EquipoAdminCard({ equipo }) {
         <img
           src={logo || equipo.logo}
           alt={equipo.name}
-          className="w-10 h-10 object-contain flex-shrink-0 rounded-lg bg-white/60"
+          className="w-14 h-14 object-contain flex-shrink-0 rounded-lg bg-white/60"
         />
         <div className="flex-1 min-w-0 space-y-1.5">
           <input
@@ -114,12 +115,25 @@ export default function EquipoAdminCard({ equipo }) {
             placeholder="Nombre del equipo"
             className="w-full h-8 px-2 text-xs font-semibold rounded-lg border border-emerald-600/25 bg-white/80 text-forest-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/40"
           />
-          <input
-            value={logo}
-            onChange={(e) => setLogo(e.target.value)}
-            placeholder="URL del escudo (/images/nombre.png)"
-            className="w-full h-8 px-2 text-[11px] rounded-lg border border-emerald-600/25 bg-white/80 text-forest-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/40"
-          />
+          <div className="flex items-center gap-1.5">
+            <input
+              value={logo}
+              onChange={(e) => setLogo(e.target.value)}
+              placeholder="URL del escudo"
+              className="flex-1 min-w-0 h-9 px-2 text-[11px] rounded-lg border border-emerald-600/25 bg-white/80 text-forest-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/40"
+            />
+            <SubirEscudoBoton
+              onSubida={(url) => {
+                setLogo(url);
+                setMensaje("Foto subida, dale a Guardar para aplicarla ✓");
+                setTimeout(() => setMensaje(""), 4000);
+              }}
+              onError={(msg) => {
+                setMensaje(msg);
+                setTimeout(() => setMensaje(""), 5000);
+              }}
+            />
+          </div>
         </div>
       </div>
 

@@ -3,9 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { useLigaData } from "../lib/useLigaData";
 import { actualizarFechaJornada, marcarJornadaProxima } from "../lib/scheduleStore";
 import { crearEquipo } from "../lib/teamsStore";
-import { login, logout, isLoggedIn, suscribirseASesion } from "../lib/adminAuth";
+import { login, isLoggedIn, suscribirseASesion } from "../lib/adminAuth";
 import PartidoAdminCard from "../components/PartidoAdminCard";
 import EquipoAdminCard from "../components/EquipoAdminCard";
+import SubirEscudoBoton from "../components/SubirEscudoBoton";
 import { CampoFila, SelectorEstilizado } from "../components/AdminField";
 
 function LoginForm({ onSuccess }) {
@@ -224,12 +225,28 @@ function TabEquipos({ teams }) {
           placeholder="Nombre del equipo"
           className="w-full h-9 px-2.5 text-xs rounded-lg border border-emerald-600/25 bg-white/80 focus:outline-none focus:ring-2 focus:ring-emerald-500/40"
         />
-        <input
-          value={logo}
-          onChange={(e) => setLogo(e.target.value)}
-          placeholder="URL del escudo (opcional, /images/nombre.png)"
-          className="w-full h-9 px-2.5 text-xs rounded-lg border border-emerald-600/25 bg-white/80 focus:outline-none focus:ring-2 focus:ring-emerald-500/40"
-        />
+        <div className="flex items-center gap-2">
+          {logo && (
+            <img
+              src={logo}
+              alt="Vista previa"
+              className="w-9 h-9 object-contain flex-shrink-0 rounded-lg bg-white/60"
+            />
+          )}
+          <input
+            value={logo}
+            onChange={(e) => setLogo(e.target.value)}
+            placeholder="URL del escudo (opcional)"
+            className="flex-1 min-w-0 h-9 px-2.5 text-xs rounded-lg border border-emerald-600/25 bg-white/80 focus:outline-none focus:ring-2 focus:ring-emerald-500/40"
+          />
+          <SubirEscudoBoton
+            onSubida={(url) => setLogo(url)}
+            onError={(msg) => {
+              setMensaje(msg);
+              setTimeout(() => setMensaje(""), 5000);
+            }}
+          />
+        </div>
         <div className="flex items-center justify-between">
           {mensaje && <span className="text-[10px] text-moss-muted">{mensaje}</span>}
           <button
@@ -274,10 +291,6 @@ export default function Admin() {
     };
   }, []);
 
-  const cerrarSesion = async () => {
-    await logout();
-    setAutenticado(false);
-  };
 
   if (cargandoSesion) {
     return (
@@ -302,36 +315,24 @@ export default function Admin() {
         </h2>
       </section>
 
-      <div
-        className="flex items-center justify-between gap-2 mt-3"
-        style={{ paddingLeft: 20, paddingRight: 20 }}
-      >
-        <div className="flex gap-2">
-          {[
-            { id: "resultados", label: "Resultados y horarios" },
-            { id: "equipos", label: "Equipos y jugadores" },
-          ].map((t) => (
-            <button
-              key={t.id}
-              type="button"
-              onClick={() => setTab(t.id)}
-              className={
-                tab === t.id
-                  ? "px-3 py-1.5 rounded-full text-[11px] font-bold bg-emerald-600 text-white"
-                  : "px-3 py-1.5 rounded-full text-[11px] font-semibold bg-white/70 text-moss-muted border border-emerald-600/20"
-              }
-            >
-              {t.label}
-            </button>
-          ))}
-        </div>
-        <button
-          type="button"
-          onClick={cerrarSesion}
-          className="px-3 py-1.5 rounded-full text-[11px] font-semibold bg-white/70 text-red-600 border border-red-500/30 flex-shrink-0"
-        >
-          Cerrar sesión
-        </button>
+      <div className="flex gap-2 mt-3" style={{ paddingLeft: 20, paddingRight: 20 }}>
+        {[
+          { id: "resultados", label: "Resultados y horarios" },
+          { id: "equipos", label: "Equipos y jugadores" },
+        ].map((t) => (
+          <button
+            key={t.id}
+            type="button"
+            onClick={() => setTab(t.id)}
+            className={
+              tab === t.id
+                ? "px-3 py-1.5 rounded-full text-[11px] font-bold bg-emerald-600 text-white"
+                : "px-3 py-1.5 rounded-full text-[11px] font-semibold bg-white/70 text-moss-muted border border-emerald-600/20"
+            }
+          >
+            {t.label}
+          </button>
+        ))}
       </div>
 
       {cargando || jornadas.length === 0 ? (

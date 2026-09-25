@@ -95,3 +95,27 @@ alter publication supabase_realtime add table public.players;
 alter publication supabase_realtime add table public.matchdays;
 alter publication supabase_realtime add table public.matches;
 alter publication supabase_realtime add table public.match_results;
+
+-- ================= ESCUDOS (STORAGE) =================
+-- Bucket publico para poder subir fotos como escudo de un equipo
+-- directamente desde el panel de administrador.
+insert into storage.buckets (id, name, public)
+values ('team-logos', 'team-logos', true)
+on conflict (id) do nothing;
+
+create policy "Lectura publica de escudos"
+  on storage.objects for select
+  using (bucket_id = 'team-logos');
+
+create policy "Admin puede subir escudos"
+  on storage.objects for insert
+  with check (bucket_id = 'team-logos' and auth.role() = 'authenticated');
+
+create policy "Admin puede actualizar escudos"
+  on storage.objects for update
+  using (bucket_id = 'team-logos' and auth.role() = 'authenticated')
+  with check (bucket_id = 'team-logos' and auth.role() = 'authenticated');
+
+create policy "Admin puede borrar escudos"
+  on storage.objects for delete
+  using (bucket_id = 'team-logos' and auth.role() = 'authenticated');
