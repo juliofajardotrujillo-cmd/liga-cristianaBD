@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLigaData } from "../lib/useLigaData";
-import { actualizarFechaJornada } from "../lib/scheduleStore";
+import { actualizarFechaJornada, marcarJornadaProxima } from "../lib/scheduleStore";
 import { crearEquipo } from "../lib/teamsStore";
 import { login, logout, isLoggedIn, suscribirseASesion } from "../lib/adminAuth";
 import PartidoAdminCard from "../components/PartidoAdminCard";
@@ -124,6 +124,45 @@ function FechaJornada({ jornada }) {
   );
 }
 
+function ProximaJornadaSelector({ jornadas }) {
+  const actual = jornadas.find((j) => j.esProxima);
+  const [guardando, setGuardando] = useState(false);
+  const [mensaje, setMensaje] = useState("");
+
+  const cambiar = async (e) => {
+    const numero = Number(e.target.value);
+    setGuardando(true);
+    const res = await marcarJornadaProxima(numero);
+    setGuardando(false);
+    setMensaje(res.ok ? "Actualizado ✓" : res.mensaje);
+    setTimeout(() => setMensaje(""), 3000);
+  };
+
+  return (
+    <div
+      className="rounded-2xl p-3.5 bg-white/70 border border-white/90 shadow-xs"
+      style={{ marginLeft: 20, marginRight: 20 }}
+    >
+      <label className="block text-[11px] font-semibold text-moss-muted mb-1.5">
+        Jornada que se muestra como "Próxima" en Inicio y Calendario
+      </label>
+      <select
+        value={actual?.numero ?? ""}
+        onChange={cambiar}
+        disabled={guardando}
+        className="w-full h-10 px-3 rounded-xl border border-emerald-600/25 bg-white/80 text-sm font-semibold text-forest-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 disabled:opacity-60"
+      >
+        {jornadas.map((j) => (
+          <option key={j.numero} value={j.numero}>
+            {j.titulo} — {j.fecha}
+          </option>
+        ))}
+      </select>
+      {mensaje && <p className="text-[10px] text-moss-muted mt-1">{mensaje}</p>}
+    </div>
+  );
+}
+
 function TabResultados({ teams, jornadas }) {
   const [numeroJornada, setNumeroJornada] = useState(jornadas[0]?.numero);
   const jornada = jornadas.find((j) => j.numero === numeroJornada) || jornadas[0];
@@ -132,7 +171,7 @@ function TabResultados({ teams, jornadas }) {
 
   return (
     <>
-      <div className="mt-3 mb-1" style={{ paddingLeft: 20, paddingRight: 20 }}>
+      <div className="mt-3" style={{ paddingLeft: 20, paddingRight: 20 }}>
         <label className="block text-[11px] font-semibold text-moss-muted mb-1.5">
           Jornada
         </label>
@@ -148,6 +187,10 @@ function TabResultados({ teams, jornadas }) {
           ))}
         </select>
         <FechaJornada jornada={jornada} />
+      </div>
+
+      <div className="mt-3" style={{ paddingLeft: 20, paddingRight: 20 }}>
+        <ProximaJornadaSelector jornadas={jornadas} />
       </div>
 
       <div className="space-y-3 mt-3 mb-6" style={{ paddingLeft: 20, paddingRight: 20 }}>
@@ -287,7 +330,7 @@ export default function Admin() {
         <button
           type="button"
           onClick={cerrarSesion}
-          className="text-[11px] font-semibold text-red-600 flex-shrink-0"
+          className="px-3 py-1.5 rounded-full text-[11px] font-semibold bg-white/70 text-red-600 border border-red-500/30 flex-shrink-0"
         >
           Cerrar sesión
         </button>
