@@ -99,7 +99,8 @@ insert into public.players (team_id, name, sort_order) values
   ('rocafuerte', 'Rubén Martínez', 11),
   ('rocafuerte', 'Marcos Luna', 12),
   ('rocafuerte', 'Esteban Salazar', 13),
-  ('rocafuerte', 'Aarón Reyes', 14);
+  ('rocafuerte', 'Aarón Reyes', 14)
+  on conflict (team_id, name) do nothing;
 
 insert into public.matchdays (numero, titulo, fecha, badge, es_proxima) values
   (1, 'Jornada 1', 'Domingo 20/09/2026', null, true),
@@ -152,4 +153,5 @@ insert into public.matches (jornada_numero, orden, local_team_id, local_label, v
   (11, 1, null, '2° Clasificado', null, '3° Clasificado', '4:30 pm'),
   (12, 0, null, '4° Clasificado', null, '1° Clasificado', '3:30 pm'),
   (12, 1, null, '3° Clasificado', null, '2° Clasificado', '4:30 pm'),
-  (13, 0, null, 'Ganador Semifinal 1', null, 'Ganador Semifinal 2', '4:00pm');
+  (13, 0, null, 'Ganador Semifinal 1', null, 'Ganador Semifinal 2', '4:00pm')
+  on conflict (jornada_numero, coalesce(local_team_id, ''), coalesce(local_label, ''), coalesce(visitante_team_id, ''), coalesce(visitante_label, '')) do nothing;

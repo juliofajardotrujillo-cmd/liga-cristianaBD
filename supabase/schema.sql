@@ -20,6 +20,11 @@ create table if not exists public.players (
   sort_order integer not null default 0
 );
 
+-- Evita que un mismo equipo pueda tener dos jugadores con el mismo
+-- nombre (por ejemplo, si se corre seed.sql mas de una vez).
+create unique index if not exists players_team_name_unique
+  on public.players (team_id, name);
+
 -- ================= JORNADAS =================
 create table if not exists public.matchdays (
   numero integer primary key,
@@ -45,6 +50,15 @@ create table if not exists public.matches (
   visitante_label text,
   hora text not null default ''
 );
+
+-- Evita que el mismo enfrentamiento quede duplicado dentro de la
+-- misma jornada (por ejemplo, si se corre seed.sql mas de una vez).
+create unique index if not exists matches_unique_pairing
+  on public.matches (
+    jornada_numero,
+    coalesce(local_team_id, ''), coalesce(local_label, ''),
+    coalesce(visitante_team_id, ''), coalesce(visitante_label, '')
+  );
 
 -- ================= RESULTADOS =================
 create table if not exists public.match_results (

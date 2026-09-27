@@ -14,7 +14,7 @@ export const articulos = [
       },
       {
         strong: "Mínimo para jugar:",
-        text: "Para que el equipo pueda jugar debe tener más del 50% de sus jugadores en el campo; de lo contrario, perderá el partido.",
+        text: "Para que el equipo pueda jugar debe tener más del 50% de sus jugadores en el campo; de lo contrario, perderá el partido con marcador de 3-0.",
       },
     ],
   },
@@ -67,7 +67,7 @@ export const articulos = [
       },
       {
         strong: "Puntualidad:",
-        text: "Los equipos deberán conocer previamente el horario/turno en que juegan cada jornada y serán responsables de estar a tiempo; el equipo que no tenga el 50% de sus jugadores a tiempo perderá el partido.",
+        text: "Los equipos deberán conocer previamente el horario/turno en que juegan cada jornada y serán responsables de estar a tiempo; el equipo que no tenga el 50% de sus jugadores a tiempo perderá el partido con marcador de 3-0.",
       },
       {
         strong: "Cambios de horario:",
@@ -160,7 +160,7 @@ export const articulos = [
       },
       {
         strong: "Desempates:",
-        text: "1) Diferencia de goles. 2) Resultados entre los equipos involucrados. 3) Serie de penales.",
+        text: "1) Diferencia de goles. 2) Resultados entre los equipos involucrados. 3) un penal.",
       },
       {
         strong: "Goleadores:",
