@@ -220,3 +220,22 @@ puede subir/cambiar/borrar).
 
 Si vas a crear un proyecto de Supabase nuevo desde cero, no hace falta
 ese paso extra: ya está incluido en `schema.sql`.
+
+## Actualización: turnos de juego repartidos parejo entre los 6 equipos
+
+Antes, Sinaí jugaba siempre a las 3:30pm (primer turno) en las 10
+jornadas regulares. Se recalculó el orden de los partidos dentro de
+cada jornada para que **todos los equipos** jueguen su turno (3:30pm,
+4:20pm o 5:10pm) de forma pareja a lo largo del torneo — cada equipo
+termina jugando cada turno 3 o 4 veces (no puede ser exactamente igual
+porque son 10 jornadas y 3 turnos, pero queda lo más parejo posible).
+
+**Importante:** esto NO cambia quién juega contra quién en cada
+jornada, solo a qué hora le toca jugar a cada partido.
+
+**Si tu proyecto de Supabase ya está funcionando**, corre una vez el
+archivo `supabase/migracion_turnos_parejos.sql` en el SQL Editor de
+Supabase.
+
+Si vas a crear un proyecto nuevo desde cero, no hace falta ese paso:
+ya está incluido en `seed.sql`.
