@@ -49,10 +49,3 @@ create unique index if not exists matches_unique_pairing
     coalesce(local_team_id, ''), coalesce(local_label, ''),
     coalesce(visitante_team_id, ''), coalesce(visitante_label, '')
   );
-
--- ============ 4. IMPORTANTE ============
--- Despues de correr esto, vuelve a correr tambien el archivo
--- migracion_turnos_parejos.sql (aunque ya lo hayas corrido antes: es
--- seguro repetirlo). Esto asegura que el partido que quedo vivo de
--- cada jornada tenga el turno y horario correctos, sin importar cual
--- de las copias duplicadas se haya conservado arriba.

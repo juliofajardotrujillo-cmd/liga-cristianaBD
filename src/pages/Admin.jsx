@@ -153,7 +153,7 @@ function ProximaJornadaSelector({ jornadas }) {
   );
 }
 
-function TabResultados({ teams, jornadas }) {
+function TabResultados({ teams, jornadas, onCambio }) {
   const [numeroJornada, setNumeroJornada] = useState(jornadas[0]?.numero);
   const jornada = jornadas.find((j) => j.numero === numeroJornada) || jornadas[0];
 
@@ -183,6 +183,7 @@ function TabResultados({ teams, jornadas }) {
             partido={partido}
             local={getTeamByName(partido.local)}
             visitante={getTeamByName(partido.visitante)}
+            onCambio={onCambio}
           />
         ))}
       </div>
@@ -270,7 +271,7 @@ export default function Admin() {
   const [autenticado, setAutenticado] = useState(false);
   const [cargandoSesion, setCargandoSesion] = useState(true);
   const [tab, setTab] = useState("resultados");
-  const { teams, jornadas, cargando } = useLigaData();
+  const { teams, jornadas, cargando, recargar } = useLigaData();
 
   useEffect(() => {
     let activo = true;
@@ -338,7 +339,7 @@ export default function Admin() {
       {cargando || jornadas.length === 0 ? (
         <div className="mt-10 text-center text-xs text-moss-muted">Cargando…</div>
       ) : tab === "resultados" ? (
-        <TabResultados teams={teams} jornadas={jornadas} />
+        <TabResultados teams={teams} jornadas={jornadas} onCambio={recargar} />
       ) : (
         <TabEquipos teams={teams} />
       )}

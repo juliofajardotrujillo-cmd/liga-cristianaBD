@@ -44,7 +44,7 @@ function HoraField({ hora, horaGuardada, onChange, onBlurGuardar }) {
 // local y visitante son equipos completos ({ id, name, logo, players:
 // [{id,name}] }) o null si ese lado del partido todavia no tiene
 // equipo definido (ej. "1° Clasificado").
-export default function PartidoAdminCard({ matchId, partido, local, visitante }) {
+export default function PartidoAdminCard({ matchId, partido, local, visitante, onCambio }) {
   const [cargado, setCargado] = useState(false);
   const [golesLocal, setGolesLocal] = useState("");
   const [golesVisitante, setGolesVisitante] = useState("");
@@ -64,6 +64,7 @@ export default function PartidoAdminCard({ matchId, partido, local, visitante })
     if (hora === partido.hora) return;
     await actualizarHoraPartido(matchId, hora);
     setHoraGuardada(true);
+    onCambio?.(); // recarga los datos para que la jornada se reordene por hora
   };
 
   // Carga el resultado guardado de ESTE partido especifico, cada vez

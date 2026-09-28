@@ -1,5 +1,39 @@
 import { supabase } from "./supabaseClient";
 
+// Convierte una hora escrita como "3:30 pm", "4:00pm", "5 pm" o
+// "15:30" en minutos desde medianoche, para poder ordenar los
+// partidos por su hora real. Devuelve null si no se puede leer.
+export function horaAMinutos(hora) {
+  const texto = (hora || "").trim();
+
+  const ampm = /^(\d{1,2})(?::(\d{2}))?\s*([ap])\.?\s*m\.?$/i.exec(texto);
+  if (ampm) {
+    let h = Number(ampm[1]) % 12;
+    if (ampm[3].toLowerCase() === "p") h += 12;
+    return h * 60 + Number(ampm[2] || 0);
+  }
+
+  const h24 = /^(\d{1,2}):(\d{2})$/.exec(texto);
+  if (h24) return Number(h24[1]) * 60 + Number(h24[2]);
+
+  return null;
+}
+
+// Ordena los partidos de una jornada por hora (el que empieza antes va
+// primero). Si alguna hora no se puede leer, ese partido queda al
+// final; y si dos empiezan a la misma hora, se respeta el orden que
+// tenian.
+function ordenarPorHora(partidos) {
+  return [...partidos].sort((a, b) => {
+    const ta = horaAMinutos(a.hora);
+    const tb = horaAMinutos(b.hora);
+    if (ta === null && tb === null) return a.orden - b.orden;
+    if (ta === null) return 1;
+    if (tb === null) return -1;
+    return ta - tb || a.orden - b.orden;
+  });
+}
+
 // Devuelve las jornadas con sus partidos, con el nombre de cada
 // equipo ya resuelto (busca el equipo por su id en la lista de
 // equipos que se le pasa, para no tener que volver a consultar la
@@ -26,14 +60,17 @@ export async function getJornadas(equipos) {
     fecha: j.fecha,
     badge: j.badge,
     esProxima: j.es_proxima,
-    partidos: (matches || [])
-      .filter((m) => m.jornada_numero === j.numero)
-      .map((m) => ({
-        id: m.id,
-        local: resolverNombre(m.local_team_id, m.local_label),
-        visitante: resolverNombre(m.visitante_team_id, m.visitante_label),
-        hora: m.hora,
-      })),
+    partidos: ordenarPorHora(
+      (matches || [])
+        .filter((m) => m.jornada_numero === j.numero)
+        .map((m) => ({
+          id: m.id,
+          orden: m.orden,
+          local: resolverNombre(m.local_team_id, m.local_label),
+          visitante: resolverNombre(m.visitante_team_id, m.visitante_label),
+          hora: m.hora,
+        }))
+    ),
   }));
 }
 

@@ -122,13 +122,14 @@ actualiza solo gracias a Supabase Realtime).
    (cualquiera puede leer, solo un admin logueado puede escribir), y
    habilita las actualizaciones en tiempo real.
 
-### 3. Cargar los datos iniciales (los mismos que ya tenías)
+### 3. Cargar los datos iniciales
 
 1. Nueva query en el **SQL Editor**.
 2. Copia y pega todo el contenido de `supabase/seed.sql` y dale a
-   **Run**. Esto carga los 6 equipos, sus jugadores y las 13 jornadas
-   con los mismos horarios que ya tenía la app, para que no se pierda
-   nada al conectar la base de datos.
+   **Run**. Esto carga los 6 equipos y las 13 jornadas con sus horarios.
+   Los jugadores se agregan después desde el panel de administrador
+   (Equipos y jugadores). Solo carga datos si las tablas están vacías,
+   así que repetirlo no duplica ni pisa nada.
 
 ### 4. Crear el usuario administrador
 
@@ -221,21 +222,32 @@ puede subir/cambiar/borrar).
 Si vas a crear un proyecto de Supabase nuevo desde cero, no hace falta
 ese paso extra: ya está incluido en `schema.sql`.
 
-## Actualización: turnos de juego repartidos parejo entre los 6 equipos
+## Actualización: turnos por hora, y protección de tus datos
 
-Antes, Sinaí jugaba siempre a las 3:30pm (primer turno) en las 10
-jornadas regulares. Se recalculó el orden de los partidos dentro de
-cada jornada para que **todos los equipos** jueguen su turno (3:30pm,
-4:20pm o 5:10pm) de forma pareja a lo largo del torneo — cada equipo
-termina jugando cada turno 3 o 4 veces (no puede ser exactamente igual
-porque son 10 jornadas y 3 turnos, pero queda lo más parejo posible).
+**Los partidos de cada jornada ahora se ordenan solos por su hora**
+(el que empieza a las 3:30 pm va primero, luego el de las 4:20 pm, etc.).
+Si el administrador cambia la hora de un partido desde el panel, la
+lista se reordena automáticamente para todos. No depende de ningún
+orden guardado en la base de datos.
 
-**Importante:** esto NO cambia quién juega contra quién en cada
-jornada, solo a qué hora le toca jugar a cada partido.
+**Regla de oro: ningún archivo de este proyecto vuelve a pisar lo que
+edites desde el panel de administrador.**
 
-**Si tu proyecto de Supabase ya está funcionando**, corre una vez el
-archivo `supabase/migracion_turnos_parejos.sql` en el SQL Editor de
-Supabase.
+- `seed.sql` solo carga los equipos y el calendario cuando esas tablas
+  están **completamente vacías** (proyecto nuevo). Si ya tienes datos,
+  no hace nada. Tampoco carga jugadores: las plantillas oficiales se
+  agregan desde el panel (Equipos y jugadores).
+- Se eliminó el script que reasignaba horarios de los turnos, porque
+  sobrescribía las horas que el administrador hubiera cambiado.
+- `migracion_proxima_jornada.sql` ya no vuelve a marcar la Jornada 1 si
+  el administrador eligió otra.
 
-Si vas a crear un proyecto nuevo desde cero, no hace falta ese paso:
-ya está incluido en `seed.sql`.
+**Scripts de una sola vez para una base de datos que ya está en uso**
+(todos son seguros si se repiten):
+
+1. `supabase/migracion_limpiar_duplicados.sql`: borra jugadores y
+   partidos repetidos, y agrega reglas para que no vuelvan a duplicarse.
+2. `supabase/limpiar_jugadores_ejemplo.sql`: quita los jugadores de
+   ejemplo de 3ra Bautista, El Corderito, Pedro y Roca Fuerte que
+   reaparecieron, dejando solo los que agregaste tú. Solo borra los
+   ejemplos de un equipo si ese equipo ya tiene jugadores oficiales.
