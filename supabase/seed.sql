@@ -16,9 +16,9 @@ begin
   if not exists (select 1 from public.teams) then
     insert into public.teams (id, name, logo_url, sort_order) values
       ('sinai', 'Sinaí', '/images/escudo_sinai.png', 0),
-      ('bautista', '3ra Bautista', '/images/3ra_bautista.png', 1),
-      ('corderito', 'El Corderito', '/images/el_cordero.png', 2),
-      ('pedro', 'Pedro', '/images/pedro.png', 3),
+      ('bautista', 'Buenas Nuevas', '/images/buenas_nuevas.png', 1),
+      ('corderito', 'El Cordero', '/images/el_cordero.png', 2),
+      ('pedro', 'El Parque', '/images/el_parque.png', 3),
       ('ligaevangelica', 'Liga Evangélica', '/images/liga_evangelica.png', 4),
       ('rocafuerte', 'Roca Fuerte', '/images/roca_fuerte.png', 5);
   end if;

@@ -44,9 +44,9 @@ Para poner tus imágenes reales, solo reemplaza cada archivo dentro de
 | Archivo                       | Qué escudo/imagen va ahí     |
 |--------------------------------|-------------------------------|
 | `escudo_sinai.png`             | Escudo de Sinaí               |
-| `3ra_bautista.png`             | Escudo de 3ra Bautista        |
-| `el_cordero.png`               | Escudo de El Corderito        |
-| `pedro.png`                    | Escudo de Pedro               |
+| `buenas_nuevas.png`            | Escudo de Buenas Nuevas       |
+| `el_cordero.png`               | Escudo de El Cordero          |
+| `el_parque.png`                | Escudo de El Parque           |
 | `liga_evangelica.png`          | Escudo de Liga Evangélica     |
 | `roca_fuerte.png`              | Escudo de Roca Fuerte         |
 | `trionda_5_photoroom.png`      | Balón Trionda (se anima en Inicio) |
@@ -248,6 +248,27 @@ edites desde el panel de administrador.**
 1. `supabase/migracion_limpiar_duplicados.sql`: borra jugadores y
    partidos repetidos, y agrega reglas para que no vuelvan a duplicarse.
 2. `supabase/limpiar_jugadores_ejemplo.sql`: quita los jugadores de
-   ejemplo de 3ra Bautista, El Corderito, Pedro y Roca Fuerte que
+   ejemplo de Buenas Nuevas, El Cordero, El Parque y Roca Fuerte que
    reaparecieron, dejando solo los que agregaste tú. Solo borra los
    ejemplos de un equipo si ese equipo ya tiene jugadores oficiales.
+
+## Actualización: cambio de nombre de 3 equipos
+
+- **El Corderito** → **El Cordero** (mismo equipo, solo cambió el nombre; el escudo ya estaba bien puesto).
+- **Pedro** → **El Parque** (equipo nuevo que sustituye a Pedro; escudo `el_parque.png`).
+- **3ra Bautista** → **Buenas Nuevas** (equipo nuevo que sustituye a 3ra Bautista; escudo `buenas_nuevas.png`).
+
+**Si tu proyecto de Supabase ya está en uso**, corre una vez
+`supabase/renombrar_equipos.sql` en el SQL Editor. Cambia el nombre y
+el escudo sin tocar el `id` interno del equipo, así que todos los
+partidos, jugadores y resultados que ya tenías cargados para esos
+equipos se conservan intactos — solo cambia cómo se muestran.
+
+**Importante:** como El Parque y Buenas Nuevas son equipos distintos a
+los que jugaban antes, después de correr la migración entra a la
+pestaña "Equipos y jugadores" del panel y actualiza sus jugadores (la
+migración no toca la plantilla, solo el nombre y el escudo del
+equipo).
+
+Si vas a crear un proyecto de Supabase nuevo desde cero, no hace falta
+ese paso extra: `seed.sql` ya nace con los nombres correctos.

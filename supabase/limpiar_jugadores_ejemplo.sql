@@ -2,9 +2,10 @@
 -- seed antiguo, para que solo queden los que agregaste tu desde el
 -- panel de administrador.
 --
--- Afecta a: 3ra Bautista, El Corderito, Pedro y Roca Fuerte (los
--- equipos cuyas plantillas eran de relleno). NO toca a Sinai ni a
--- Liga Evangelica.
+-- Afecta a los equipos con id 'bautista' (ahora "Buenas Nuevas'),
+-- 'corderito' (ahora "El Cordero"), 'pedro' (ahora "El Parque") y
+-- 'rocafuerte' — eran los equipos cuyas plantillas eran de relleno.
+-- NO toca a Sinai ni a Liga Evangelica.
 --
 -- PROTECCION: los ejemplos de un equipo SOLO se borran si ese equipo
 -- ya tiene al menos un jugador que NO es de ejemplo (o sea, uno de
